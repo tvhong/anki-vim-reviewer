@@ -1,0 +1,14 @@
+[project]
+name = "anki-vim-reviewer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "anki>=25.2.7",
+    "aqt>=25.2.7",
+    "pudb>=2025.1",
+]
