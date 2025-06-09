@@ -8,5 +8,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "anki>=25.2.7",
+    "aqt>=25.2.7",
     "pudb>=2025.1",
 ]
