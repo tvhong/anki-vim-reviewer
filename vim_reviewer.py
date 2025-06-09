@@ -15,7 +15,6 @@ Copyright:  (c) 2021 Yaroslav Fedorichenko <yar.fed99@gmail.com>
 License: GNU AGPLv3 or later <https://www.gnu.org/licenses/agpl.html>
 """
 
-from typing import Callable
 from anki.hooks import wrap
 from aqt import mw, gui_hooks, QShortcut
 from aqt.main import AnkiQt
@@ -92,8 +91,8 @@ def add_vim_shortcuts(self: AnkiQt, _old_shortcuts: any):
         ("Shift+K", True, lambda: _scrollUp(config['Shift_K_scroll_distance'])),
         ("/", False, lambda: _search_forward()),
         ("?", False, lambda: _search_backward()),
-        # ("n", False, lambda: _search_next()),
-        ("N", False, lambda: _search_previous())
+        ("n", False, lambda: _search_next()),
+        ("Shift+N", False, lambda: _search_previous())
     ]
 
     qshortcuts = []
