@@ -15,56 +15,61 @@ Copyright:  (c) 2021 Yaroslav Fedorichenko <yar.fed99@gmail.com>
 License: GNU AGPLv3 or later <https://www.gnu.org/licenses/agpl.html>
 """
 
+from typing import Callable
 from anki.hooks import wrap
-from aqt import mw
+from aqt import mw, gui_hooks, QShortcut
 from aqt.main import AnkiQt
-from aqt.qt import QShortcut, QKeySequence, QInputDialog
+from aqt.qt import QInputDialog
 
 
-config = mw.addonManager.getConfig(__name__) if hasattr(mw, 'addonManager') else {}
+if mw is None:
+    raise ValueError("Mainwindow is not yet initialized")
+
+config = mw.addonManager.getConfig(__name__)
 
 # Search state
 current_search_term = ""
 search_direction = "forward"
+prevActionStudyDeck: bool = True
 
-def _scrollDown(self, vertical = 50):
-    _scroll(self, abs(vertical))
+def _scrollDown(vertical = 50):
+    _scroll(abs(vertical))
 
-def _scrollUp(self, vertical = 50):
-    _scroll(self, -abs(vertical))
+def _scrollUp(vertical = 50):
+    _scroll(-abs(vertical))
 
-def _scroll(self, vertical):
-    self.web.eval(f"window.scrollBy(0,{vertical})")
+def _scroll(vertical):
+    mw.web.eval(f"window.scrollBy(0,{vertical})")
 
-def _search_forward(self):
+def _search_forward():
     global current_search_term, search_direction
-    search_term, ok = QInputDialog.getText(self, "Search Forward", "Search:")
+    search_term, ok = QInputDialog.getText(mw, "Search Forward", "Search:")
     if ok and search_term:
         current_search_term = search_term
         search_direction = "forward"
-        _perform_search(self, search_term, True)
+        _perform_search(search_term, True)
 
-def _search_backward(self):
+def _search_backward():
     global current_search_term, search_direction
-    search_term, ok = QInputDialog.getText(self, "Search Backward", "Search:")
+    search_term, ok = QInputDialog.getText(mw, "Search Backward", "Search:")
     if ok and search_term:
         current_search_term = search_term
         search_direction = "backward"
-        _perform_search(self, search_term, False)
+        _perform_search(search_term, False)
 
-def _search_next(self):
+def _search_next():
     global current_search_term, search_direction
     if current_search_term:
         forward = search_direction == "forward"
-        _perform_search(self, current_search_term, forward)
+        _perform_search(current_search_term, forward)
 
-def _search_previous(self):
+def _search_previous():
     global current_search_term, search_direction
     if current_search_term:
         forward = search_direction != "forward"
-        _perform_search(self, current_search_term, forward)
+        _perform_search(current_search_term, forward)
 
-def _perform_search(self, search_term, forward=True):
+def _perform_search(search_term, forward=True):
     # Clear any existing highlights first
     # self.web.eval("window.getSelection().removeAllRanges();")
 
@@ -73,32 +78,55 @@ def _perform_search(self, search_term, forward=True):
     case_sensitive = "false"
     wrap_around = "true"
     cmd = f"window.find('{search_term}', {case_sensitive}, {direction}, {wrap_around});"
-    self.web.eval(cmd)
+    mw.web.eval(cmd)
 
 def add_vim_shortcuts(self: AnkiQt, _old_shortcuts: any):
+    """Add VIM shortcuts to Anki."""
     if not self.state == "review":
         return
 
     shortcuts = [
-        ("j", lambda: _scrollDown(self, config.get('j_scroll_distance', 50))),
-        ("k", lambda: _scrollUp(self, config.get('k_scroll_distance', 50))),
-        ("Shift+J", lambda: _scrollDown(self, config.get('Shift_J_scroll_distance', 150))),
-        ("Shift+K", lambda: _scrollUp(self, config.get('Shift_K_scroll_distance', 150))),
-        ("/", lambda: _search_forward(self)),
-        ("?", lambda: _search_backward(self)),
-        ("n", lambda: _search_next(self)),
-        #("N", lambda: _search_previous(self))
+        ("j", True, lambda: _scrollDown(config['j_scroll_distance'])),
+        ("k", True, lambda: _scrollUp(config['k_scroll_distance'])),
+        ("Shift+J", True, lambda: _scrollDown(config['Shift_J_scroll_distance'])),
+        ("Shift+K", True, lambda: _scrollUp(config['Shift_K_scroll_distance'])),
+        ("/", False, lambda: _search_forward()),
+        ("?", False, lambda: _search_backward()),
+        # ("n", False, lambda: _search_next()),
+        ("N", False, lambda: _search_previous())
     ]
+
     qshortcuts = []
-    for key, fn in shortcuts:
-        scut = QShortcut(QKeySequence(key), self, activated=fn)  # type: ignore
-        scut.setAutoRepeat(True)
+    for key, repeat, fn in shortcuts:
+        scut = QShortcut(key, self, activated=fn)  # type: ignore
+        scut.setAutoRepeat(repeat)
         qshortcuts.append(scut)
+
     self.stateShortcuts.extend(qshortcuts)
 
+    disable_conflict_shortcuts()
 
+
+def disable_conflict_shortcuts() -> None:
+    global prevActionStudyDeck
+
+    # To avoid overlapping '/' shortcut
+    prevActionStudyDeck = mw.form.actionStudyDeck.isEnabled()
+    mw.form.actionStudyDeck.setEnabled(False)
+    print(f"Disabling conflicting shortcut actionStudyDeck")
+
+
+def restore_conflict_shortcuts() -> None:
+    global prevActionStudyDeck
+
+    mw.form.actionStudyDeck.setEnabled(prevActionStudyDeck)
+    print(f"Restoring conflicting shortcut actionStudyDeck: {prevActionStudyDeck}")
+
+# Not using gui_hooks as we need to set setAutoRepeat=true for some shortcuts
 AnkiQt.setStateShortcuts = wrap(
     AnkiQt.setStateShortcuts,
     add_vim_shortcuts,
     "after"
 )
+
+gui_hooks.reviewer_will_end.append(restore_conflict_shortcuts)
