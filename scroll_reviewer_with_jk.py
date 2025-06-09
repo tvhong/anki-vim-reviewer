@@ -10,12 +10,13 @@ Copyright:  (c) 2021 Yaroslav Fedorichenko <yar.fed99@gmail.com>
 License: GNU AGPLv3 or later <https://www.gnu.org/licenses/agpl.html>
 """
 
-from PyQt5.QtWidgets import QShortcut
-from PyQt5.QtGui import QKeySequence
-from aqt import AnkiQt, mw
 from anki.hooks import wrap
+from aqt import mw
+from aqt.main import AnkiQt
+from aqt.qt import QShortcut, QKeySequence
 
-config = mw.addonManager.getConfig(__name__)
+
+config = mw.addonManager.getConfig(__name__) if hasattr(mw, 'addonManager') else {}
 def _scroll(self, vertical):
     self.web.eval(f"window.scrollBy(0,{vertical})")
 
