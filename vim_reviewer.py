@@ -87,8 +87,9 @@ def add_vim_shortcuts(self: AnkiQt, _old_shortcuts: any):
     shortcuts = [
         ("j", True, lambda: _scrollDown(config['j_scroll_distance'])),
         ("k", True, lambda: _scrollUp(config['k_scroll_distance'])),
-        ("Shift+J", True, lambda: _scrollDown(config['Shift_J_scroll_distance'])),
-        ("Shift+K", True, lambda: _scrollUp(config['Shift_K_scroll_distance'])),
+        ("Ctrl+D", True, lambda: _scrollDown(config['Shift_J_scroll_distance'])),
+        ("Ctrl+U", True, lambda: _scrollUp(config['Shift_K_scroll_distance'])),
+
         ("/", False, lambda: _search_forward()),
         ("?", False, lambda: _search_backward()),
         ("n", False, lambda: _search_next()),
