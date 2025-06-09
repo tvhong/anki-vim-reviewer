@@ -66,15 +66,19 @@ def _search_previous(self):
 
 def _perform_search(self, search_term, forward=True):
     # Clear any existing highlights first
-    self.web.eval("window.getSelection().removeAllRanges();")
+    # self.web.eval("window.getSelection().removeAllRanges();")
 
     # Use browser's find API
-    direction = "true" if forward else "false"
-    self.web.eval(f"window.find('{search_term}', false, {direction});")
+    direction = "false" if forward else "true"
+    case_sensitive = "false"
+    wrap_around = "true"
+    cmd = f"window.find('{search_term}', {case_sensitive}, {direction}, {wrap_around});"
+    self.web.eval(cmd)
 
-def add_vim_shortcuts(self, shortcuts):
+def add_vim_shortcuts(self: AnkiQt, _old_shortcuts: any):
     if not self.state == "review":
         return
+
     shortcuts = [
         ("j", lambda: _scrollDown(self, config.get('j_scroll_distance', 50))),
         ("k", lambda: _scrollUp(self, config.get('k_scroll_distance', 50))),
@@ -83,7 +87,7 @@ def add_vim_shortcuts(self, shortcuts):
         ("/", lambda: _search_forward(self)),
         ("?", lambda: _search_backward(self)),
         ("n", lambda: _search_next(self)),
-        ("N", lambda: _search_previous(self))
+        #("N", lambda: _search_previous(self))
     ]
     qshortcuts = []
     for key, fn in shortcuts:
@@ -93,4 +97,8 @@ def add_vim_shortcuts(self, shortcuts):
     self.stateShortcuts.extend(qshortcuts)
 
 
-AnkiQt.setStateShortcuts = wrap(AnkiQt.setStateShortcuts, add_vim_shortcuts)
+AnkiQt.setStateShortcuts = wrap(
+    AnkiQt.setStateShortcuts,
+    add_vim_shortcuts,
+    "after"
+)
