@@ -16,7 +16,7 @@ License: GNU AGPLv3 or later <https://www.gnu.org/licenses/agpl.html>
 """
 
 from anki.hooks import wrap
-from aqt import mw, gui_hooks, QShortcut
+from aqt import mw, gui_hooks, QShortcut, QKeySequence
 from aqt.main import AnkiQt
 from aqt.qt import QInputDialog
 
@@ -87,18 +87,18 @@ def add_vim_shortcuts(self: AnkiQt, _old_shortcuts: any):
     shortcuts = [
         ("j", True, lambda: _scrollDown(config['j_scroll_distance'])),
         ("k", True, lambda: _scrollUp(config['k_scroll_distance'])),
-        ("Ctrl+D", True, lambda: _scrollDown(config['Shift_J_scroll_distance'])),
-        ("Ctrl+U", True, lambda: _scrollUp(config['Shift_K_scroll_distance'])),
+        ("Shift+j", True, lambda: _scrollDown(config['Shift_J_scroll_distance'])),
+        ("Shift+k", True, lambda: _scrollUp(config['Shift_K_scroll_distance'])),
 
         ("/", False, lambda: _search_forward()),
         ("?", False, lambda: _search_backward()),
         ("n", False, lambda: _search_next()),
-        ("Shift+N", False, lambda: _search_previous())
+        ("Shift+n", False, lambda: _search_previous())
     ]
 
     qshortcuts = []
     for key, repeat, fn in shortcuts:
-        scut = QShortcut(key, self, activated=fn)  # type: ignore
+        scut = QShortcut(QKeySequence(key), self, activated=fn)  # type: ignore
         scut.setAutoRepeat(repeat)
         qshortcuts.append(scut)
 
