@@ -1,0 +1,31 @@
+[project]
+name = "anki-vim-reviewer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "anki>=25.2.7",
+    "aqt>=25.2.7",
+    "pudb>=2025.1",
+    "ruff>=0.0.1",
+    "pre-commit>=3.0.0",
+    "pytest>=7.0.0",
+    "anki-vim-reviewer",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+]
+
+[tool.uv.sources]
+anki-vim-reviewer = { workspace = true }
