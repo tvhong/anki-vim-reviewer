@@ -1,4 +1,7 @@
 # Development commands for anki-vim-reviewer
+# Sync virtual environment
+sync:
+    uv sync --group dev
 
 # Run ruff linter
 lint:
