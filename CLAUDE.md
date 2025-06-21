@@ -51,6 +51,9 @@ uv add --dev anki aqt pudb
 This project uses `just` for common development tasks:
 
 ```bash
+# Sync dependencies
+just sync
+
 # Lint code with ruff
 just lint
 
@@ -63,11 +66,21 @@ just check
 # Fix linting issues automatically
 just fix
 
-# Run test
+# Run tests with pytest
 just test
 
 # Setup pre-commit hooks
 just setup-hooks
+```
+
+Run individual tests:
+
+```bash
+# Run specific test file
+uv run pytest tests/test_search.py
+
+# Run specific test method
+uv run pytest tests/test_search.py::TestSearchHandler::test_handle_initiation_keys_valid
 ```
 
 ### Pre-commit Hooks
@@ -126,3 +139,4 @@ Based on the current TODO list in `design.md`, the following features/bugs are k
 ## Workflow
 
 - Find the next step in the TODO list under design.md
+- Always run `just check` before committing to ensure code quality
