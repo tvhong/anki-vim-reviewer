@@ -77,10 +77,10 @@ Run individual tests:
 
 ```bash
 # Run specific test file
-uv run pytest tests/test_search.py
+uv run python -m pytest tests/test_search.py -v
 
 # Run specific test method
-uv run pytest tests/test_search.py::TestSearchHandler::test_handle_initiation_keys_valid
+uv run python -m pytest tests/test_search.py::test_search_handler_handle_initiation_keys_forward_slash -v
 ```
 
 ### Pre-commit Hooks
@@ -133,7 +133,7 @@ Based on the current TODO list in `design.md`, the following features/bugs are k
 
 - Search functionality exists but some input handling issues remain (backspace, enter key)
 - Next/previous search navigation (n/N) is partially implemented
-- Unit tests need to be added
+- Unit tests have been added for config and search modules
 - Some edge cases in event handling during search mode
 
 ## Workflow

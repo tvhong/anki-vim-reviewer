@@ -20,7 +20,7 @@ fix:
 
 # Run tests with pytest
 test:
-    uv run pytest tests/
+    uv run python -m pytest tests/ -v
 
 # Setup git hooks using pre-commit
 setup-hooks:
