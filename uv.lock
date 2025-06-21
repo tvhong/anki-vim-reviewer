@@ -28,7 +28,7 @@ wheels = [
 [[package]]
 name = "anki-vim-reviewer"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 
 [package.dev-dependencies]
 dev = [
@@ -46,7 +46,7 @@ dev = [
 [package.metadata.requires-dev]
 dev = [
     { name = "anki", specifier = ">=25.2.7" },
-    { name = "anki-vim-reviewer", virtual = "." },
+    { name = "anki-vim-reviewer", editable = "." },
     { name = "aqt", specifier = ">=25.2.7" },
     { name = "pre-commit", specifier = ">=3.0.0" },
     { name = "pudb", specifier = ">=2025.1" },
