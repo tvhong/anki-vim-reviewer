@@ -33,13 +33,17 @@ passed to refresh as a state.
 ### Search Module Tests (tests/test_search.py)
 
 - [x] Test SearchHandler.handle_initiation_keys() with / and ? keys
-- [ ] Test SearchHandler.handle_initiation_keys() with invalid keys
-- [ ] Test SearchHandler.handle_navigation_keys() with n and N keys
+- [x] Test SearchHandler.handle_initiation_keys() with invalid keys
+- [x] Test SearchHandler.handle_navigation_keys() with n and N keys
+- [ ] Refactor the test to use a fixture for webview
+- [ ] Refactor the tests to use parameterization for handle_navigation_keys tests
 - [ ] Test SearchHandler.handle_input() with Enter/Return key
 - [ ] Test SearchHandler.handle_input() with Escape key
 - [ ] Test SearchHandler.handle_input() with Backspace key
 - [ ] Test SearchHandler.handle_input() with printable characters
 - [ ] Test SearchHandler state transitions during search workflow
+
+- [ ] searchNext() in JS should just be searchForward()
 
 ### Movement Module Tests (tests/test_movement.py)
 
